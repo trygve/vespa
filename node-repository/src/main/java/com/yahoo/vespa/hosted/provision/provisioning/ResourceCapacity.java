@@ -28,6 +28,12 @@ public class ResourceCapacity {
         disk = node.flavor().getMinDiskAvailableGb();
     }
 
+    ResourceCapacity(Flavor flavor) {
+        memory = flavor.getMinMainMemoryAvailableGb();
+        cpu = flavor.getMinCpuCores();
+        disk = flavor.getMinDiskAvailableGb();
+    }
+
     public double getMemory() {
         return memory;
     }

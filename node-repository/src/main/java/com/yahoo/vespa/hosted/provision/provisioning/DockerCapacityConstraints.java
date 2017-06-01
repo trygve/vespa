@@ -13,6 +13,7 @@ import com.yahoo.vespa.hosted.provision.NodeList;
 
 import java.time.Clock;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,11 +62,25 @@ public class DockerCapacityConstraints {
 
     public static List<Node> addHeadroomAndSpareNodes(List<Node> nodes, NodeFlavors flavors, int nofSpares) {
         List<Node> sparesAndHeadroom = addSpareNodes(nodes, nofSpares);
-        return addNodes(sparesAndHeadroom, flavors.getFlavors(), "headroom");
+
+        //
+        // Sort flavors in decending order to offer the
+        // the largest flavors first. This to avoid smaller flavors to starve headroom for larger.
+        // Considered also the stride scheduling but - I don't thing it is necessary.
+        //
+        List<Flavor> flavorList = flavors.getFlavors();
+        Collections.sort(flavorList, (a, b) -> {
+            ResourceCapacity ac = new ResourceCapacity(a);
+            ResourceCapacity bc = new ResourceCapacity(b);
+            return bc.compare(ac);
+        });
+
+        return addNodes(sparesAndHeadroom, flavorList, "headroom");
     }
 
     private static List<Node> addNodes(List<Node> nodes, List<Flavor> flavors, String id) {
         List<Node> headroom = new ArrayList<>(nodes);
+
         for (Flavor flavor : flavors) {
             int headroomCount = flavor.getIdealHeadroom();
             if (headroomCount > 0) {
@@ -74,6 +89,7 @@ public class DockerCapacityConstraints {
                 headroom.addAll(acceptedNodes);
             }
         }
+
         return headroom;
     }
 
