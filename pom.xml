@@ -5,7 +5,7 @@
     <groupId>com.yahoo.vespa</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>6-SNAPSHOT</version>
+    <version>6.133.50</version>
     <name>parent</name>
     <description>Parent artifact for all Vespa maven projects.</description>
     <url>http://yahoo.github.io/vespa</url>
