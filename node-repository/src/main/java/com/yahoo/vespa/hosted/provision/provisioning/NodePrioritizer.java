@@ -134,7 +134,7 @@ public class NodePrioritizer {
                 }
 
                 if (tempHeadroom.size() == flavor.getIdealHeadroom()) {
-                    continue;
+                    break;
                 }
             }
 
